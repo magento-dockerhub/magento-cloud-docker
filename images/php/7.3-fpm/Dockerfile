@@ -105,6 +105,26 @@ RUN rm -f /usr/local/etc/php/conf.d/*sodium.ini \
   && rm -rf /tmp/libsodium  \
   && pecl install -o -f libsodium
 
+RUN cd /tmp \
+  && git clone --recursive --depth=1 https://github.com/kjdev/php-ext-snappy.git \
+  && cd php-ext-snappy \
+  && phpize \
+  && ./configure \
+  && make \
+  && make install \
+  && cd / \
+  && rm -rf /tmp/snappy
+
+RUN cd /tmp \
+  && git clone --recursive --depth=1 https://github.com/kjdev/php-ext-lz4.git \
+  && cd php-ext-lz4 \
+  && phpize \
+  && ./configure \
+  && make \
+  && make install \
+  && cd / \
+  && rm -rf /tmp/lz4
+
 RUN docker-php-ext-enable \
   bcmath \
   bz2 \
@@ -143,7 +163,9 @@ RUN docker-php-ext-enable \
   xsl \
   yaml \
   zip \
-  pcntl
+  pcntl \
+  snappy \
+  lz4
 
 COPY etc/php-fpm.ini /usr/local/etc/php/conf.d/zz-magento.ini
 COPY etc/php-xdebug.ini /usr/local/etc/php/conf.d/zz-xdebug-settings.ini
